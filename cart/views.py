@@ -29,7 +29,7 @@ def create_cart(request):
 
 
 @csrf_exempt  # Disable CSRF for simplicity
-def close_cart(request, cart_id):
+def checkout(request, cart_id):
     if request.method != "PUT":
         return JsonResponse({"error": "Invalid request method"}, status=405)
 

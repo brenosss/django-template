@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from django.core.serializers.json import DjangoJSONEncoder
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "cart",
+    "jaiminho",
 ]
 
 MIDDLEWARE = [
@@ -129,3 +131,11 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 APPEND_SLASH = False
+
+# Jaiminho
+JAIMINHO_CONFIG = {
+    "PERSIST_ALL_EVENTS": False,
+    "DELETE_AFTER_SEND": True,
+    "DEFAULT_ENCODER": DjangoJSONEncoder,
+    "PUBLISH_STRATEGY": "publish-on-commit",
+}

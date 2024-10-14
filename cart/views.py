@@ -1,6 +1,8 @@
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from jaiminho.send import save_to_outbox
+
 from .models import Cart
 
 
@@ -28,6 +30,11 @@ def create_cart(request):
         return JsonResponse({"error": "Invalid JSON"}, status=400)
 
 
+@save_to_outbox
+def add_checkout_to_queue(cart_id):
+    pass
+
+
 @csrf_exempt  # Disable CSRF for simplicity
 def checkout(request, cart_id):
     if request.method != "PUT":
@@ -37,6 +44,8 @@ def checkout(request, cart_id):
         cart = Cart.objects.get(id=cart_id)
         cart.closed = True
         cart.save()
+
+        add_checkout_to_queue(cart_id)
 
         return JsonResponse(
             {"message": "Cart closed successfully!", "cart_id": cart.id},

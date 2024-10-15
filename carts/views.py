@@ -1,10 +1,9 @@
 import json
 
-from jaiminho.send import save_to_outbox
-
 from django import forms
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from orders.services import craete_order
 
 from carts.models import Cart
 from carts.services import CartService
@@ -56,12 +55,6 @@ def index(request):
         case _:
             return JsonResponse({"error": "Invalid request method"}, status=405)
 
-
-@save_to_outbox
-def add_checkout_to_queue(cart_id):
-    pass
-
-
 @csrf_exempt  # Disable CSRF for simplicity
 def checkout(request, cart_id):
     if request.method != "PUT":
@@ -69,8 +62,7 @@ def checkout(request, cart_id):
 
     try:
         cart = CartService.checkout(cart_id)
-
-        add_checkout_to_queue(cart_id)
+        craete_order(cart_id, price=cart.total_amount)
 
         return JsonResponse(
             {"message": "Cart closed successfully!", "cart_id": cart.id},

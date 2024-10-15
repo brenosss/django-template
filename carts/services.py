@@ -1,6 +1,5 @@
 from carts.models import Cart
 
-
 class CartService:
     @staticmethod
     def create_cart(total_amount):

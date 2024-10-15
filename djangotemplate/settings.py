@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "carts",
     "orders",
     "jaiminho",
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
@@ -140,4 +141,12 @@ JAIMINHO_CONFIG = {
     "DELETE_AFTER_SEND": True,
     "DEFAULT_ENCODER": DjangoJSONEncoder,
     "PUBLISH_STRATEGY": "publish-on-commit",
+}
+
+CELERY_TIMEZONE = 'UTC'
+CELERY_BEAT_SCHEDULE = {
+    'add-every-30-seconds': {
+        'task': 'carts.tasks.outbox_event_relay',
+        'schedule': 30.0,
+    },
 }

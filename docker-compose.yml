@@ -18,12 +18,11 @@ services:
       - "8000:8000"
     depends_on:
       - redis
-      - celery
       - postgres
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
 
-  celery:
+  celery-worker:
     build:
       context: .
     container_name: celery_worker
@@ -35,7 +34,20 @@ services:
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
 
-  flower:
+  celery-beat: # celery scheduller tasks
+    build:
+      context: .
+    container_name: celery_beat
+    command: celery -A djangotemplate beat --loglevel=DEBUG --schedule=/app/celerybeat-schedule
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - postgres
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+
+  celery-flower:
     build:
       context: .
     container_name: celery_flower
@@ -45,7 +57,9 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - celery
+      - celery-worker
+      - redis
+      - celery-beat
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
 

@@ -42,8 +42,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "carts",
     "orders",
-    "jaiminho",
     "django_celery_beat",
+    "django_outbox_pattern",
 ]
 
 MIDDLEWARE = [
@@ -143,10 +143,16 @@ JAIMINHO_CONFIG = {
     "PUBLISH_STRATEGY": "publish-on-commit",
 }
 
-CELERY_TIMEZONE = 'UTC'
+CELERY_TIMEZONE = "UTC"
 CELERY_BEAT_SCHEDULE = {
-    'add-every-30-seconds': {
-        'task': 'carts.tasks.outbox_event_relay',
-        'schedule': 30.0,
+    "add-every-30-seconds": {
+        "task": "carts.tasks.publish_outbox_messages",
+        "schedule": 30.0,
     },
 }
+
+DJANGO_OUTBOX_PATTERN = {
+    "DEFAULT_STOMP_HOST_AND_PORTS": [("rabbitmq", 61613)],
+    "DEFAULT_STOMP_USERNAME": "guest",
+    "DEFAULT_STOMP_PASSCODE": "guest",
+}  # Default RabbitMQ config

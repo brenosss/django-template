@@ -1,10 +1,16 @@
-from jaiminho.constants import PublishStrategyType
-from jaiminho.send import save_to_outbox_stream
+from django_outbox_pattern.models import Published
+
+from django.db import transaction
 
 from orders.models import Order
 
 
-@save_to_outbox_stream(None, PublishStrategyType.KEEP_ORDER)
-def craete_order(cart_id, price):
-    Order.objects.create(cart_id=cart_id, price=price)
-    print("Order created successfully!")
+class OrderService:
+    @staticmethod
+    def create_order(cart_id, price):
+        with transaction.atomic():
+            Order.objects.create(cart_id=cart_id, price=price)
+            Published.objects.create(
+                destination="create_order",
+                body={"cart_id": cart_id, "price": str(price)},
+            )

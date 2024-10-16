@@ -323,20 +323,6 @@ files = [
 dev = ["polib"]
 
 [[package]]
-name = "dill"
-version = "0.3.6"
-description = "serialize all of python"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "dill-0.3.6-py3-none-any.whl", hash = "sha256:a07ffd2351b8c678dfc4a856a3005f8067aea51d6ba6c700796a4d9e280f39f0"},
-    {file = "dill-0.3.6.tar.gz", hash = "sha256:e5db55f3687856d8fbdab002ed78544e1c4559a130302693d839dfe8f93f2373"},
-]
-
-[package.extras]
-graph = ["objgraph (>=1.7.2)"]
-
-[[package]]
 name = "django"
 version = "5.1.2"
 description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
@@ -376,19 +362,19 @@ python-crontab = ">=2.3.4"
 tzdata = "*"
 
 [[package]]
-name = "django-jaiminho"
-version = "1.2.0"
-description = "A broker agnostic implementation of outbox and other message resilience patterns for Django apps"
+name = "django-outbox-pattern"
+version = "2.0.0"
+description = "A django application to make it easier to use the transactional outbox pattern"
 optional = false
-python-versions = ">=3.7, <4"
+python-versions = "<4.0,>=3.10"
 files = [
-    {file = "django_jaiminho-1.2.0-py2.py3-none-any.whl", hash = "sha256:743c7de2b3f42813eff8d1e1a2bb310a2ecd8b9056e02aafc66f676746bd57b3"},
+    {file = "django_outbox_pattern-2.0.0-py3-none-any.whl", hash = "sha256:a85d069818f1bf816bb443dfe69a9028d61d49f4e72726309e16bf516c665aa2"},
+    {file = "django_outbox_pattern-2.0.0.tar.gz", hash = "sha256:946b29b180919c7cb6097b988b4d6e3e99b3fe1d7ee5b82e49e5558a0eaf663a"},
 ]
 
 [package.dependencies]
-dill = "0.3.6"
-Django = "*"
-sentry-sdk = "*"
+django = ">=5.0.8"
+"stomp.py" = ">=8.0.1,<9"
 
 [[package]]
 name = "django-timezone-field"
@@ -403,6 +389,16 @@ files = [
 
 [package.dependencies]
 Django = ">=3.2,<6.0"
+
+[[package]]
+name = "docopt"
+version = "0.6.2"
+description = "Pythonic argument parser, that will make you smile"
+optional = false
+python-versions = "*"
+files = [
+    {file = "docopt-0.6.2.tar.gz", hash = "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"},
+]
 
 [[package]]
 name = "flower"
@@ -617,58 +613,6 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
-name = "sentry-sdk"
-version = "2.16.0"
-description = "Python client for Sentry (https://sentry.io)"
-optional = false
-python-versions = ">=3.6"
-files = [
-    {file = "sentry_sdk-2.16.0-py2.py3-none-any.whl", hash = "sha256:49139c31ebcd398f4f6396b18910610a0c1602f6e67083240c33019d1f6aa30c"},
-    {file = "sentry_sdk-2.16.0.tar.gz", hash = "sha256:90f733b32e15dfc1999e6b7aca67a38688a567329de4d6e184154a73f96c6892"},
-]
-
-[package.dependencies]
-certifi = "*"
-urllib3 = ">=1.26.11"
-
-[package.extras]
-aiohttp = ["aiohttp (>=3.5)"]
-anthropic = ["anthropic (>=0.16)"]
-arq = ["arq (>=0.23)"]
-asyncpg = ["asyncpg (>=0.23)"]
-beam = ["apache-beam (>=2.12)"]
-bottle = ["bottle (>=0.12.13)"]
-celery = ["celery (>=3)"]
-celery-redbeat = ["celery-redbeat (>=2)"]
-chalice = ["chalice (>=1.16.0)"]
-clickhouse-driver = ["clickhouse-driver (>=0.2.0)"]
-django = ["django (>=1.8)"]
-falcon = ["falcon (>=1.4)"]
-fastapi = ["fastapi (>=0.79.0)"]
-flask = ["blinker (>=1.1)", "flask (>=0.11)", "markupsafe"]
-grpcio = ["grpcio (>=1.21.1)", "protobuf (>=3.8.0)"]
-http2 = ["httpcore[http2] (==1.*)"]
-httpx = ["httpx (>=0.16.0)"]
-huey = ["huey (>=2)"]
-huggingface-hub = ["huggingface-hub (>=0.22)"]
-langchain = ["langchain (>=0.0.210)"]
-litestar = ["litestar (>=2.0.0)"]
-loguru = ["loguru (>=0.5)"]
-openai = ["openai (>=1.0.0)", "tiktoken (>=0.3.0)"]
-opentelemetry = ["opentelemetry-distro (>=0.35b0)"]
-opentelemetry-experimental = ["opentelemetry-distro"]
-pure-eval = ["asttokens", "executing", "pure-eval"]
-pymongo = ["pymongo (>=3.1)"]
-pyspark = ["pyspark (>=2.4.4)"]
-quart = ["blinker (>=1.1)", "quart (>=0.16.1)"]
-rq = ["rq (>=0.6)"]
-sanic = ["sanic (>=0.8)"]
-sqlalchemy = ["sqlalchemy (>=1.2)"]
-starlette = ["starlette (>=0.19.1)"]
-starlite = ["starlite (>=1.48)"]
-tornado = ["tornado (>=6)"]
-
-[[package]]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -693,6 +637,21 @@ files = [
 [package.extras]
 dev = ["build", "hatch"]
 doc = ["sphinx"]
+
+[[package]]
+name = "stomp-py"
+version = "8.1.2"
+description = "Python STOMP client, supporting versions 1.0, 1.1 and 1.2 of the protocol"
+optional = false
+python-versions = "<4.0,>=3.7"
+files = [
+    {file = "stomp_py-8.1.2-py3-none-any.whl", hash = "sha256:61200b85442a0f374155820f122518371c9c3dc77bb320ae9052d5a840fc5875"},
+    {file = "stomp_py-8.1.2.tar.gz", hash = "sha256:b56e62da090863cc65e5fbf832230318cd53e99dc777de19ecb04e83914f1371"},
+]
+
+[package.dependencies]
+docopt = ">=0.6.2,<0.7.0"
+websocket-client = ">=1.2.3,<2.0.0"
 
 [[package]]
 name = "tornado"
@@ -775,7 +734,23 @@ files = [
     {file = "wcwidth-0.2.13.tar.gz", hash = "sha256:72ea0c06399eb286d978fdedb6923a9eb47e1c486ce63e9b4e64fc18303972b5"},
 ]
 
+[[package]]
+name = "websocket-client"
+version = "1.8.0"
+description = "WebSocket client for Python with low level API options"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "websocket_client-1.8.0-py3-none-any.whl", hash = "sha256:17b44cc997f5c498e809b22cdf2d9c7a9e71c02c8cc2b6c56e7c2d1239bfa526"},
+    {file = "websocket_client-1.8.0.tar.gz", hash = "sha256:3239df9f44da632f96012472805d40a23281a991027ce11d2f45a6f24ac4c3da"},
+]
+
+[package.extras]
+docs = ["Sphinx (>=6.0)", "myst-parser (>=2.0.0)", "sphinx-rtd-theme (>=1.1.0)"]
+optional = ["python-socks", "wsaccel"]
+test = ["websockets"]
+
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "01fc3090b69815462a45f16b12720051e1eecd524b9d9bc624310453e88cb892"
+content-hash = "2a410a2e0e61a89ed3a451f6e1b0c17bace5c36b8f460a9937f0206a99a0147b"

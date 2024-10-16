@@ -1,8 +1,10 @@
 from celery import shared_task
-from jaiminho.relayer import EventRelayer
+
+from django.core.management import call_command
+
 
 @shared_task
-def outbox_event_relay():
-    EventRelayer().relay()
-    print("Events relayed successfully!")
-    
+def publish_outbox_messages():
+    call_command(
+        "publish"
+    )  # Send message through STOMP protocol to the configured broker

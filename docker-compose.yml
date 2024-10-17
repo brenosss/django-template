@@ -42,7 +42,7 @@ services:
       context: .
     container_name: orders_server
     command: >
-      sh -c "python manage.py subscribe 'orders.callbacks.callback' 'cart_checkout'"
+      sh -c "python manage.py subscribe 'orders.callbacks.callback' '/queue/create_order' 'create_order'"
     volumes:
       - .:/app
     depends_on:

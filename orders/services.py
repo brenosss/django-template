@@ -11,7 +11,3 @@ class OrderService:
         print(f"Creating order for cart {cart_id} with price {price}")
         with transaction.atomic():
             Order.objects.create(cart_id=cart_id, price=price)
-            Published.objects.create(
-                destination="create_order",
-                body={"cart_id": cart_id, "price": str(price)},
-            )

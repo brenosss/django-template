@@ -156,3 +156,27 @@ DJANGO_OUTBOX_PATTERN = {
     "DEFAULT_STOMP_USERNAME": "guest",
     "DEFAULT_STOMP_PASSCODE": "guest",
 }  # Default RabbitMQ config
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',  # You can adjust the level here
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django_outbox_pattern': {
+            'handlers': ['console'],
+            'level': 'DEBUG',  # Set the appropriate log level here
+            'propagate': True,
+        },
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}

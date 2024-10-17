@@ -3,7 +3,7 @@ import json
 from django import forms
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from orders.services import OrderService
+from django_outbox_pattern.models import Published
 
 from carts.models import Cart
 from carts.services import CartService
@@ -63,7 +63,10 @@ def checkout(request, cart_id):
 
     try:
         cart = CartService.checkout(cart_id)
-        OrderService.create_order(cart_id, price=cart.total_amount)
+        Published.objects.create(
+            destination="cart_checkout",
+            body={"cart_id": cart.id, "price": str(cart.total_amount)},
+        )
 
         return JsonResponse(
             {"message": "Cart closed successfully!", "cart_id": cart.id},

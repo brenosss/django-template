@@ -22,6 +22,36 @@ services:
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
 
+  outbox_publisher:
+    build:
+      context: .
+    container_name: outbox_publisher
+    command: >
+      sh -c "python manage.py publish"
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - postgres
+      - rabbitmq
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+
+  orders_worker:
+    build:
+      context: .
+    container_name: orders_server
+    command: >
+      sh -c "python manage.py subscribe 'orders.callbacks.callback' 'cart_checkout'"
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - postgres
+      - rabbitmq
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+
   celery-worker:
     build:
       context: .

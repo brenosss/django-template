@@ -1,4 +1,8 @@
+from django.db import transaction
+from django_outbox_pattern.models import Published
+
 from carts.models import Cart
+
 
 class CartService:
     @staticmethod
@@ -8,7 +12,12 @@ class CartService:
 
     @staticmethod
     def checkout(cart_id):
-        cart = Cart.objects.get(id=cart_id)
-        cart.closed = True
-        cart.save()
+        with transaction.atomic():
+            cart = Cart.objects.get(id=cart_id)
+            cart.closed = True
+            cart.save()
+            Published.objects.create(
+                destination="checkout",
+                body={"cart_id": cart.id, "price": str(cart.total_amount)},
+            )
         return cart

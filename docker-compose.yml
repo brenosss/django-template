@@ -42,7 +42,22 @@ services:
       context: .
     container_name: orders_server
     command: >
-      sh -c "python manage.py subscribe 'orders.callbacks.callback' '/queue/create_order' 'create_order'"
+      sh -c "python manage.py subscribe 'orders.callbacks.callback' '/topic/orders.*'"
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - postgres
+      - rabbitmq
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+
+  metrics_worker:
+    build:
+      context: .
+    container_name: metrics_server
+    command: >
+      sh -c "python manage.py subscribe 'metrics.callbacks.callback' '/topic/*.new'"
     volumes:
       - .:/app
     depends_on:

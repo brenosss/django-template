@@ -17,8 +17,7 @@ class CartService:
             cart.closed = True
             cart.save()
             Published.objects.create(
-                destination="/queue/create_order",
+                destination="/topic/orders.new",
                 body={"cart_id": cart.id, "price": str(cart.total_amount)},
-                headers={'x-dead-letter-exchange': '', 'x-dead-letter-routing-key':'DLQ.create_order' },
             )
         return cart

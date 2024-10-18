@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "carts",
     "orders",
+    "metrics",
     "django_celery_beat",
     "django_outbox_pattern",
 ]
@@ -159,24 +160,24 @@ DJANGO_OUTBOX_PATTERN = {
 
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',  # You can adjust the level here
-            'class': 'logging.StreamHandler',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "level": "DEBUG",  # You can adjust the level here
+            "class": "logging.StreamHandler",
         },
     },
-    'loggers': {
-        'django_outbox_pattern': {
-            'handlers': ['console'],
-            'level': 'DEBUG',  # Set the appropriate log level here
-            'propagate': True,
+    "loggers": {
+        "django_outbox_pattern": {
+            "handlers": ["console"],
+            "level": "DEBUG",  # Set the appropriate log level here
+            "propagate": True,
         },
-        'django': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': True,
+        "django": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": True,
         },
     },
 }

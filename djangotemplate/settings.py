@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "carts",
     "orders",
     "metrics",
+    "outbox",
     "django_celery_beat",
     "django_outbox_pattern",
 ]
@@ -156,6 +157,7 @@ DJANGO_OUTBOX_PATTERN = {
     "DEFAULT_STOMP_HOST_AND_PORTS": [("rabbitmq", 61613)],
     "DEFAULT_STOMP_USERNAME": "guest",
     "DEFAULT_STOMP_PASSCODE": "guest",
+    "DEFAULT_RECEIVED_CLASS": "outbox.models.Received",
 }  # Default RabbitMQ config
 
 

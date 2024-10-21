@@ -1,7 +1,7 @@
 from django.db import transaction
-from django_outbox_pattern.models import Published
 
 from carts.models import Cart
+from outbox.services import OutboxService
 
 
 class CartService:
@@ -16,7 +16,7 @@ class CartService:
             cart = Cart.objects.get(id=cart_id)
             cart.closed = True
             cart.save()
-            Published.objects.create(
+            OutboxService.create_published(
                 destination="/topic/orders.new",
                 body={"cart_id": cart.id, "price": str(cart.total_amount)},
             )

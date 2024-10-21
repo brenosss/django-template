@@ -2,6 +2,7 @@
 from django.db import transaction
 from django_outbox_pattern.payloads import Payload
 from metrics.models import Metric
+from outbox.services import OutboxService
 
 
 def callback(payload: Payload):
@@ -11,5 +12,5 @@ def callback(payload: Payload):
         (metric, _) = Metric.objects.get_or_create(description="orders_created")
         metric.count += 1
         metric.save()
-        payload.nack()
+        OutboxService.create_received(payload)
         print("Metric created successfully!")

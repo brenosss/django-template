@@ -3,13 +3,13 @@ from django_outbox_pattern.payloads import Payload
 
 
 class OutboxService:
-
     @staticmethod
     def create_published(destination, body):
-        return Published.objects.create(
+        published = Published.objects.create(
             destination=destination,
             body=body,
         )
+        return published
 
     @staticmethod
     def create_received(payload: Payload):

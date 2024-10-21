@@ -1,19 +1,10 @@
 from django.http import JsonResponse
+from django.views import View
 
-from metrics.models import Metric
+from metrics.services import MetricService
 
 
-def index(request):
-    if request.method == "GET":
-        metrics = Metric.objects.all()
-        return JsonResponse(
-            {
-                "metrics": [
-                    {
-                        "description": metric.description,
-                        "count": metric.count,
-                    }
-                    for metric in metrics
-                ]
-            }
-        )
+class MetricsView(View):
+    def get(self, _):
+        metrics = MetricService.get_all_metrics()
+        return JsonResponse({"metrics": list(metrics)})

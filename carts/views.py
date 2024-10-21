@@ -3,6 +3,8 @@ import json
 from django import forms
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.views import View
 
 from carts.models import Cart
 from carts.services import CartService
@@ -14,58 +16,37 @@ class CartForm(forms.ModelForm):
         fields = ["total_amount"]
 
 
-def is_json_valid(body):
-    try:
-        json.loads(body)
-        return True
-    except:
-        return False
+@method_decorator(csrf_exempt, name="dispatch")
+class CartsView(View):
+    def get(self, _):
+        carts = CartService.get_all_carts()
+        return JsonResponse({"carts": list(carts)})
 
-
-@csrf_exempt  # Disable CSRF for simplicity
-def index(request):
-    match request.method:
-        case "POST":
-            if not is_json_valid(request.body):
-                return JsonResponse({"error": "Invalid JSON"}, status=400)
-            form = CartForm(json.loads(request.body))
-            if not form.is_valid():
-                return JsonResponse({"error": form.errors}, status=400)
-            cart = CartService.create_cart(form.cleaned_data["total_amount"])
+    def post(self, request):
+        data = json.loads(request.body)
+        form = CartForm(data)
+        if not form.is_valid():
             return JsonResponse(
-                {"message": "Cart created successfully!", "cart_id": cart.id},
-                status=201,
+                {"error": form.errors},
+                status=400,
             )
-        case "GET":
-            all_carts = Cart.objects.all()
-            return JsonResponse(
-                {
-                    "carts": [
-                        {
-                            "id": cart.id,
-                            "total_amount": cart.total_amount,
-                            "created_at": cart.created_at,
-                            "closed": cart.closed,
-                        }
-                        for cart in all_carts
-                    ]
-                }
-            )
-        case _:
-            return JsonResponse({"error": "Invalid request method"}, status=405)
+        cart = CartService.create_cart(total_amount=form.cleaned_data["total_amount"])
+        return JsonResponse(
+            {"message": "Cart created successfully!", "cart_id": cart.id},
+            status=201,
+        )
 
 
-@csrf_exempt  # Disable CSRF for simplicity
-def checkout(request, cart_id):
-    if request.method != "PUT":
-        return JsonResponse({"error": "Invalid request method"}, status=405)
-
-    try:
+@method_decorator(csrf_exempt, name="dispatch")
+class CheckoutView(View):
+    def put(self, _, cart_id):
         cart = CartService.checkout(cart_id)
-
+        if not cart:
+            return JsonResponse(
+                {"error": "Cart not found"},
+                status=404,
+            )
         return JsonResponse(
             {"message": "Cart closed successfully!", "cart_id": cart.id},
             status=200,
         )
-    except Cart.DoesNotExist:
-        return JsonResponse({"error": "Cart not found"}, status=404)

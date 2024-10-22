@@ -1,0 +1,104 @@
+services:
+  web:
+    build:
+      context: .
+    container_name: django_server
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_NAME=${POSTGRES_NAME}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+    depends_on:
+      postgres:
+        condition: service_healthy 
+
+  outbox_publisher:
+    build:
+      context: .
+    container_name: outbox_publisher
+    command: >
+      sh -c "python manage.py publish"
+    volumes:
+      - .:/app
+    depends_on:
+      postgres:
+        condition: service_healthy  
+      rabbitmq:
+        condition: service_healthy
+
+  orders_worker:
+    build:
+      context: .
+    container_name: orders_server
+    command: >
+      sh -c "python manage.py subscribe 'orders.callbacks.callback' '/topic/orders.*'"
+    volumes:
+      - .:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  metrics_worker:
+    build:
+      context: .
+    container_name: metrics_server
+    command: >
+      sh -c "python manage.py subscribe 'metrics.callbacks.callback' '/topic/*.new'"
+    volumes:
+      - .:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:17
+    container_name: postgres
+    restart: always
+    volumes:
+      - ${HOME}/postgres:/var/lib/postgresql/data
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d ${DB_DSN}"]
+      interval: 5s
+      timeout: 1s
+      retries: 3
+
+  rabbitmq:
+    image: rabbitmq:3-management  # The management image includes the management plugin by default
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    ports:
+      - "15672:15672"
+    command: >
+      sh -c "
+      rabbitmq-plugins enable rabbitmq_management &&
+      rabbitmq-plugins enable rabbitmq_stomp &&
+      rabbitmq-server
+      "
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  rabbitmq_data:
+    driver: local

@@ -28,6 +28,3 @@ RUN poetry lock && poetry install
 
 # Copy the rest of the project files into the container
 COPY . /app/
-
-# Expose port 8000 for Django
-EXPOSE 8000

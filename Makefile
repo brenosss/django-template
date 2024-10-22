@@ -1,20 +1,26 @@
+run:
+	cd app && docker compose -p app --env-file .env -f compose.yml up -d --remove-orphans
+
 add-dependency:
-	docker-compose run web bash -c "poetry add $(dep)"
+	cd app && docker compose run web bash -c "poetry add $(dep)"
 
 rebuild:
-	docker-compose build
-
-start:
-	docker-compose up -d --remove-orphans
+	cd app && docker compose build
 
 restart:
-	docker-compose restart
+	cd app && docker compose restart
 
 restart-web:
-	docker-compose restart web celery-beat celery-flower celery-worker
+	cd app && docker compose restart web
 
-stop:
-	docker-compose down
+down:
+	cd app && docker compose down
 
 shell:
-	docker-compose exec web bash -c "python manage.py shell"
+	cd app && docker compose exec web bash -c "python manage.py shell"
+
+integration-tests:
+	cd integration_tests && docker compose -p integration_tests up web postgres orders_worker outbox_publisher metrics_worker rabbitmq postgres --build -d --remove-orphans
+	sleep 5
+	cd integration_tests && docker compose up tests
+	cd integration_tests && docker compose down

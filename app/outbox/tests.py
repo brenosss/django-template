@@ -11,8 +11,8 @@ class OutboxServiceTest(TestCase):
         self.assertEqual(published.destination, "destination")
         self.assertEqual(published.body, "body")
 
-    @patch.object(Payload, "save")
-    def test_create_received(self, mock_payload_save):
+    @patch.object(Payload, "ack")
+    def test_create_received(self, mock_payload_ack):
         payload = Payload(connection=None, body=None, headers=None)
         OutboxService.create_received(payload)
-        mock_payload_save.assert_called_once()
+        mock_payload_ack.assert_called_once()

@@ -157,7 +157,6 @@ DJANGO_OUTBOX_PATTERN = {
     "DEFAULT_STOMP_HOST_AND_PORTS": [("rabbitmq", 61613)],
     "DEFAULT_STOMP_USERNAME": "guest",
     "DEFAULT_STOMP_PASSCODE": "guest",
-    "DEFAULT_RECEIVED_CLASS": "outbox.models.Received",
 }  # Default RabbitMQ config
 
 

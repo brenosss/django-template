@@ -14,3 +14,4 @@ class OutboxService:
     @staticmethod
     def create_received(payload: Payload):
         payload.ack()
+        payload.saved = True

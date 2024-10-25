@@ -8,6 +8,6 @@ class OrderService:
         return orders
 
     @staticmethod
-    def create_order(cart_id, price):
-        order = Order.objects.create(cart_id=cart_id, price=price)
+    def create_order(cart_uuid, price):
+        order = Order.objects.create(cart_uuid=cart_uuid, price=price)
         return order

@@ -1,10 +1,12 @@
 from django.http import JsonResponse
 from django.views import View
 
-from orders.services import OrderService
+from orders.domain.query.get_all_orders import GetAllOrders
+from orders.domain.app import app
 
 
 class OrdersView(View):
     def get(self, _):
-        orders = OrderService.get_all_orders()
-        return JsonResponse({"orders": list(orders)})
+        query = GetAllOrders()
+        result = app.execute_query(query)
+        return JsonResponse({"orders": [order.to_dict() for order in result]})

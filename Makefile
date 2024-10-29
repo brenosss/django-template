@@ -20,8 +20,7 @@ shell:
 	cd app && docker compose exec web bash -c "python manage.py shell"
 
 integration-tests:
-	cd integration_tests && docker compose -p integration_tests up orders_worker outbox_publisher metrics_worker -d 
-	cd integration_tests && docker compose -p integration_tests up web --build -d --remove-orphans
+	cd integration_tests && docker compose -p integration_tests up web orders_worker outbox_publisher metrics_worker --build -d --remove-orphans
 	sleep 5
 	cd integration_tests && docker compose up tests --build
 	cd integration_tests && docker compose down

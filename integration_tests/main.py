@@ -53,12 +53,12 @@ def test_checkout_cart():
     )
     assert cart_under_test["closed"] == True
 
-    time.sleep(5)
+    time.sleep(3)
 
     response = _request("GET", "orders")
     assert response.status_code == 200
     orders = response.json()["orders"]
-    assert cart_uuid_under_test in [order["cart_uuid"] for order in orders]
+    assert cart_under_test["uuid"] in [order["cart_uuid"] for order in orders]
 
     response = _request("GET", "metrics")
     assert response.status_code == 200
@@ -68,3 +68,26 @@ def test_checkout_cart():
         metric for metric in metrics if metric["description"] == "orders_created"
     )
     assert orders_created_metric["count"] == 1
+
+
+def test_metric_increment():
+    cart_uuid_under_test = _request("POST", "carts", {"total_amount": "5.50"}).json()[
+        "cart_uuid"
+    ]
+    _request("PUT", f"carts/{cart_uuid_under_test}/checkout")
+
+    cart_uuid_under_test = _request("POST", "carts", {"total_amount": "5.50"}).json()[
+        "cart_uuid"
+    ]
+    _request("PUT", f"carts/{cart_uuid_under_test}/checkout")
+
+    time.sleep(3)
+
+    response = _request("GET", "metrics")
+    assert response.status_code == 200
+    metrics = response.json()["metrics"]
+    assert "orders_created" in [metric["description"] for metric in metrics]
+    orders_created_metric = next(
+        metric for metric in metrics if metric["description"] == "orders_created"
+    )
+    assert orders_created_metric["count"] > 1

@@ -2,7 +2,6 @@ from orders.domain.command.create_order import (
     CreateOrderCommand,
     CreateOrderCommandHandler,
 )
-from orders.domain.query.get_order import GetOrder, GetOrderHandler
 from orders.domain.query.get_all_orders import GetAllOrders, GetAllOrdersHandler
 
 
@@ -11,7 +10,7 @@ class App:
         CreateOrderCommand: CreateOrderCommandHandler,
     }
 
-    query_handlers = {GetAllOrders: GetAllOrdersHandler, GetOrder: GetOrderHandler}
+    query_handlers = {GetAllOrders: GetAllOrdersHandler}
 
     def execute_command(self, command):
         handler = self.command_handlers[type(command)]

@@ -6,8 +6,6 @@ from metrics.domain.command.create_metric import CreateMetricCommand
 from metrics.domain.command.increment_metric import IncrementMetricCommand
 from metrics.domain.query.get_metric_by_description import GetMetricByDescription
 
-from outbox.services import OutboxService
-
 
 def callback(payload: Payload):
     print(f"Creating metric for new order")
@@ -29,4 +27,5 @@ def callback(payload: Payload):
         else:
             command = IncrementMetricCommand(description)
         app.execute_command(command)
-        OutboxService.create_received(payload)
+        payload.ack()
+        payload.saved = True

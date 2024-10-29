@@ -4,8 +4,6 @@ from django_outbox_pattern.payloads import Payload
 from orders.domain.command.create_order import CreateOrderCommand
 from orders.domain.app import app
 
-from outbox.services import OutboxService
-
 
 def callback(payload: Payload):
     print(
@@ -17,5 +15,6 @@ def callback(payload: Payload):
             price=payload.body.get("price"),
         )
         app.execute_command(command)
-        OutboxService.create_received(payload)
+        payload.ack()
+        payload.saved = True
         print("Order created successfully!")
